@@ -28,7 +28,7 @@ namespace SKotstein.Net.Http.Core
             //invoke method
             InvokeMethod(task);
             //post processing
-            Postprocessing(task.Context);
+            Postprocessing(task);
 
             return task.Context;
         }
