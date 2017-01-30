@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Core
 {
+    /// <summary>
+    /// The <see cref="HttpRouter"/> forwards an incoming <see cref="HttpContext"/> object (i.e. an HTTP request) to the designated <see cref="HttpProcessor"/> hosting the target REST function
+    /// mapping the URL and the HTTP method. Invalid HTTP requests and "special" requests like HTTP OPTIONS and HTTP TRACE are routed to the <see cref="HttpProcessor"/> hosting the <see cref="HttpInternalController"/>.
+    /// </summary>
     public class HttpRouter : Router<HttpContext, RoutedContext>
     {
         private HttpService _reference;

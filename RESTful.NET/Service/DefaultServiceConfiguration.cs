@@ -8,6 +8,9 @@ namespace SKotstein.Net.Http.Service
 {
     public class DefaultServiceConfiguration : ServiceConfiguration
     {
+        /// <summary>
+        /// Default service configuration with <see cref="ServiceConfiguration.Host"/>="localhost", <see cref="ServiceConfiguration.Port"/>=8080 and <see cref="ServiceConfiguration.IsSecured"/>=false
+        /// </summary>
         public DefaultServiceConfiguration()
         {
             this.Host = "localhost";

@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Core
 {
+    /// <summary>
+    /// An implementation of this abstract class is responsible for accepting and parsing incoming HTTP requests.
+    /// </summary>
     public abstract class HttpInboundAdapter : InboundAdapter<HttpContext>
     {
-
         public const string SCHEMA_HTTP = "http";
         public const string SCHEMA_HTTPS = "https";
 

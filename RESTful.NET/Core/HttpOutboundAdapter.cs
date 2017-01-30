@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Core
 {
+    /// <summary>
+    /// An implementation of this abstract class is responsible for sending HTTP responses.
+    /// </summary>
     public abstract class HttpOutboundAdapter : OutboundAdapter<HttpContext>
     {
     }

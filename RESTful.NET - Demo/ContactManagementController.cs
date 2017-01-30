@@ -21,14 +21,11 @@ namespace RestTestServer
             ctx.Response.Status = HttpStatus.OK;
 
             ctx.Response.Payload.Write("You have called /contact");
-
-            
-            
         }
 
-        [Path("/echo",HttpMethod.POST)]
+        [Path("/echo/{id}",HttpMethod.POST)]
         [ContentType(MimeType.MESSAGE_HTTP)]
-        public void Echo(HttpContext ctx)
+        public void Echo(HttpContext ctx, string id)
         {
             ctx.Response.Status = HttpStatus.OK;
             ctx.Response.Payload.Write(ctx.Request.Payload.ReadAll());

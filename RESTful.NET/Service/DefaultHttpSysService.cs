@@ -13,6 +13,9 @@ using SKotstein.Net.Http.Attributes;
 
 namespace SKotstein.Net.Http.Service
 {
+    /// <summary>
+    /// <see cref="HttpService"/> implementation basing on the Windows HTTP stack (HTTP.sys)
+    /// </summary>
     public class DefaultHttpSysService : HttpService
     {
         #region Namespace
@@ -30,6 +33,12 @@ namespace SKotstein.Net.Http.Service
         private IDictionary<string, HttpProcessor> _httpProcessors;
         #endregion   
 
+        /// <summary>
+        /// Creates a DefaultHttpSysService instance with the specified host and port.
+        /// </summary>
+        /// <param name="isSecured">NOT_SUPPORTED_YET</param>
+        /// <param name="host">host</param>
+        /// <param name="port">port</param>
         public DefaultHttpSysService(bool isSecured, string host, int port)
         {
             _inputPipe = new BlockingCollection<HttpContext>();
@@ -57,6 +66,10 @@ namespace SKotstein.Net.Http.Service
             _serviceConfiguration.Port = port;
         }
 
+        /// <summary>
+        /// Creates a DefaultHttpSysService instance with the specified service configuration.
+        /// </summary>
+        /// <param name="serviceConfiguration"></param>
         public DefaultHttpSysService(ServiceConfiguration serviceConfiguration) : this(false,"",0)
         {
             //overwrite service configuration

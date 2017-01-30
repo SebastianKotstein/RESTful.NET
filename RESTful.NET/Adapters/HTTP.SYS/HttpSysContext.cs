@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Adapters.HTTP.SYS
 {
+    /// <summary>
+    /// <see cref="HttpContext"/> implementation wrapping an <see cref="HttpListenerContext"/> object of the Windows HTTP stack (HTTP.sys)
+    /// </summary>
     public class HttpSysContext : HttpContext
     {
         private HttpListenerContext _originalContext;

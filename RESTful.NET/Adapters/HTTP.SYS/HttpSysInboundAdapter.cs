@@ -10,6 +10,9 @@ using System.Threading;
 
 namespace SKotstein.Net.Http.Adapters.HTTP.SYS
 {
+    /// <summary>
+    /// <see cref="HttpInboundAdapter"/> implementation basing on the Windows HTTP stack (HTTP.sys)
+    /// </summary>
     public class HttpSysInboundAdapter : HttpInboundAdapter
     {
         private HttpListener _httpListener = new HttpListener();

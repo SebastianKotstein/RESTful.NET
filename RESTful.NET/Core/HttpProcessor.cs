@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Core
 {
+    /// <summary>
+    /// The <see cref="HttpProcessor"/> represents a single processing group having its own thread. Designated incoming HTTP requests are processed in order by REST functions of the nested <see cref="HttpController"/> objects. 
+    /// </summary>
     public class HttpProcessor : SimpleProcessor<RoutedContext, HttpContext>
     {
         private HttpService _reference;
@@ -90,7 +93,7 @@ namespace SKotstein.Net.Http.Core
             IList<string> variables = new List<string>();
 
             //1. split pattern
-            string[] patternElements = path.Split('/');
+            string[] patternElements = pattern.Split('/');
 
             //2. split path (of the HTTP Request)
             string[] pathElements = path.Split('/');

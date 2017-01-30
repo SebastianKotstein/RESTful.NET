@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Core
 {
+    /// <summary>
+    /// Special <see cref="HttpController"/> class which offers predefined REST functions for internal and external usage like functions for HTTP TRACE or HTTP OPTIONS with CORS.
+    /// </summary>
     public class HttpInternalController : HttpController
     {
 
@@ -26,6 +29,10 @@ namespace SKotstein.Net.Http.Core
             _reference = reference;
         }
 
+        /// <summary>
+        /// Retuns a Method not allowed or a Not Found status code
+        /// </summary>
+        /// <param name="httpContext"></param>
         [Path("/path_not_found",HttpMethod._INTERNAL)]
         public void NotFound(HttpContext httpContext)
         {
@@ -79,6 +86,10 @@ namespace SKotstein.Net.Http.Core
             }
         }
 
+        /// <summary>
+        /// Traces the HTTP request and returns the request fields as HTTP response
+        /// </summary>
+        /// <param name="httpContext"></param>
         [Path("/trace",HttpMethod._INTERNAL)]
         [ContentType(MimeType.MESSAGE_HTTP)]
         public void Trace(HttpContext httpContext)
@@ -121,19 +132,30 @@ namespace SKotstein.Net.Http.Core
             }
         }
 
+        /// <summary>
+        /// Returns an unsupported version status
+        /// </summary>
+        /// <param name="context"></param>
         [Path("/server/version",HttpMethod._INTERNAL)]
         public void UnsupportedVersion(HttpContext context)
         {
             context.Response.Status = HttpStatus.HTTPVersionNotSupported;
         }
 
+        /// <summary>
+        /// Returns a bad request
+        /// </summary>
+        /// <param name="context"></param>
         [Path("/client/bad_request", HttpMethod._INTERNAL)]
         public void BadRequest(HttpContext context)
         {
             context.Response.Status = HttpStatus.BadRequest;
         }
 
-
+        /// <summary>
+        /// Answers an HTTP OPTION and enables CORS
+        /// </summary>
+        /// <param name="httpContext"></param>
         [Path("/options",HttpMethod._INTERNAL)]
         public void Options(HttpContext httpContext)
         {

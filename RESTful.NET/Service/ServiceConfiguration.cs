@@ -1,5 +1,8 @@
 ﻿namespace SKotstein.Net.Http.Service
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ServiceConfiguration
     {
         private bool _isSecured = false;
@@ -13,7 +16,9 @@
         private AllowedHeadersMode _allowedHeadersMode = AllowedHeadersMode.ANY;
         private string _allowedHeaders = "accept, content-type";
         
-
+        /// <summary>
+        /// NOT_SUPPORTED_YET
+        /// </summary>
         public bool IsSecured
         {
             get
@@ -26,6 +31,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the port of the RESTful service
+        /// </summary>
         public int Port
         {
             get
@@ -38,6 +46,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the host of the RESTful service
+        /// </summary>
         public string Host
         {
             get
@@ -50,6 +61,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the Tracing mode
+        /// </summary>
         public TracingMode AllowTracing
         {
             get
@@ -62,6 +76,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the Option mode
+        /// </summary>
         public OptionsMode AllowOptions
         {
             get
@@ -74,6 +91,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the CORS mode
+        /// </summary>
         public CorsMode Cors
         {
             get
@@ -86,6 +106,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the AllowedOriginMode
+        /// </summary>
         public AllowedOriginMode AllowedOrigin
         {
             get
@@ -98,6 +121,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the AllowedHeadersMode
+        /// </summary>
         public AllowedHeadersMode AllowedHeaders
         {
             get
@@ -110,6 +136,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets/sets the Allowed Headers
+        /// </summary>
         public string AllowedStaticHeaders
         {
             get

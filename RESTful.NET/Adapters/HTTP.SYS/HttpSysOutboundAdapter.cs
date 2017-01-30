@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace SKotstein.Net.Http.Adapters.HTTP.SYS
 {
-    public class HttpSysOutboundAdapter : HttpOutboundAdapter
+    /// <summary>
+    /// <see cref="HttpSysOutboundAdapter"/> implementation basing on the Windows HTTP stack (HTTP.sys)
+    /// </summary> 
+   public class HttpSysOutboundAdapter : HttpOutboundAdapter
     {
         protected override void Execute(HttpContext task)
         {
