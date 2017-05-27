@@ -1,20 +1,15 @@
-﻿using System;
+﻿using SKotstein.Net.Http.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SKotstein.Net.Http.Attribute
+namespace SKotstein.Net.Http.Manipulation
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class Field : System.Attribute
+    public abstract class HttpManipulator<T>
     {
         private string _name;
-        
-        public Field(string name)
-        {
-            _name = name;
-        }
 
         public string Name
         {
@@ -22,6 +17,12 @@ namespace SKotstein.Net.Http.Attribute
             {
                 return _name;
             }
+            set
+            {
+                _name = value;
+            }
         }
+
+        public abstract void Manipulate(T context);
     }
 }

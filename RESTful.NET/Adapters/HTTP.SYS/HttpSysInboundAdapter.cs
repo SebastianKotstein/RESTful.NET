@@ -20,6 +20,7 @@ namespace SKotstein.Net.Http.Adapters.HTTP.SYS
 
         protected override void Execute()
         {
+            
             while (_httpListener.IsListening)
             {
                 //long form of ThreadPool.QueueUserWorkItem((O)=>{....},_httpListener.GetContext());

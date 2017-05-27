@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SKotstein.Demo.Http.ContactManager
@@ -29,10 +30,12 @@ namespace SKotstein.Demo.Http.ContactManager
             _bridge = businessLayer;
         }
 
+
         [Path("/contact",HttpMethod.GET)]
         [ContentType(MimeType.APPLICATION_JSON)]
         public void GetAll(HttpContext context)
         {
+            
             IList<Contact> list = _bridge.GetAllContacts();
             string json = SerializeJson(list);
 
@@ -46,6 +49,15 @@ namespace SKotstein.Demo.Http.ContactManager
                 context.Response.Status = HttpStatus.InternalServerError;
             }
         }
+
+       
+
+        /*
+        [Path("/contact/a", HttpMethod.GET)]
+        public void GetSingle2(HttpContext context, string contactId)
+        {
+        }
+        */
 
         [Path("/contact/{id}", HttpMethod.GET)]
         [ContentType(MimeType.APPLICATION_JSON)]
@@ -74,6 +86,10 @@ namespace SKotstein.Demo.Http.ContactManager
                 context.Response.Status = HttpStatus.NotFound;
             }
         }
+
+      
+
+       
 
         [Path("/contact", HttpMethod.PUT)]
         [ContentType(MimeType.APPLICATION_JSON)]
@@ -123,6 +139,7 @@ namespace SKotstein.Demo.Http.ContactManager
                 {
                     context.Response.Payload.Write(json);
                     context.Response.Status = HttpStatus.OK;
+                    
                 }
                 else
                 {
@@ -358,6 +375,16 @@ namespace SKotstein.Demo.Http.ContactManager
                 context.Response.Status = HttpStatus.NotFound;
             }
         }
+
+        /*
+        [Path("/*", HttpMethod.GET)]
+        public void SuperGenericTest(HttpContext context)
+        {
+
+        }
+        */
+        
+
 
         /// <summary>
         /// Converts a JSON structure into an object.

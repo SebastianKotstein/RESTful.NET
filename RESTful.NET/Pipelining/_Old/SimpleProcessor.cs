@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SKotstein.Net.Http.Pipelining
 {
     /// <summary>
-    /// Represents a minimal <see cref="Processor"/> implementation (filter) which consists of an input pipe, a execution unit implemented in <see cref="Execute(I)"/> and an output pipe.
+    /// Represents a single thread <see cref="Processor"/> implementation (filter) which consists of an input pipe, a execution unit implemented in <see cref="Execute(I)"/> and an output pipe.
     /// </summary>
     /// <typeparam name="I">type of input task</typeparam>
     /// <typeparam name="O">type of output result</typeparam>

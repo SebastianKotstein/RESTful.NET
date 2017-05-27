@@ -1,6 +1,7 @@
 ﻿using SKotstein.Net.Http.Attributes;
 using SKotstein.Net.Http.Context;
 using SKotstein.Net.Http.Core;
+using SKotstein.Net.Http.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +13,24 @@ namespace SKotstein.Net.Http.Routing
 {
     /// <summary>
     /// Associates a REST function with its corresponding C# method by offering details like the unique <see cref="Path"/> of the REST function, its <see cref="ProcessingGroup"/>,
-    /// the <see cref="HttpController"/> as the host of the method and its <see cref="MethodInfo"/>.
+    /// the <see cref="Core.HttpController"/> as the host of the method and its <see cref="System.Reflection.MethodInfo"/> as well as routing parameters like the unique identifier of this routing entry, the (routing-)path and the routing metrics.
     /// </summary>
-    public class RoutingEntry
+    public class RoutingEntry : TreeNode<string>
     {
-        private string _identifier;
         private string _path;
+        private int _metrics;
         private string _processingGroup;
         private HttpController _httpController;
         private MethodInfo _methodInfo;
 
         /// <summary>
-        /// Gets the routing tree target identifier associated with this routing entry
+        /// Gets the unique identifier associated with this routing entry
         /// </summary>
         public string Identifier
         {
             get
             {
-                return _identifier;
+                return Value;
             }
         }
 
@@ -41,6 +42,21 @@ namespace SKotstein.Net.Http.Routing
             get
             {
                 return _path;
+            }
+        }
+
+        /// <summary>
+        /// Gets the metrics of the routing entry.
+        /// </summary>
+        public int Metrics
+        {
+            get
+            {
+                return _metrics;
+            }
+            internal set
+            {
+                _metrics = value;
             }
         }
 
@@ -114,25 +130,6 @@ namespace SKotstein.Net.Http.Routing
         }
 
         /// <summary>
-        /// Indicates whether the underlying method is tagged with a <see cref="ContentType"/> attribute or not
-        /// </summary>
-        public bool MethodHasContentTypeAttribute
-        {
-            get
-            {
-                bool hasContentTypeAttribute = false;
-                foreach(Attribute a in System.Attribute.GetCustomAttributes(MethodInfo))
-                {
-                    if(a is ContentType)
-                    {
-                        hasContentTypeAttribute = true;
-                    }
-                }
-                return hasContentTypeAttribute;
-            }
-        }
-
-        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="processingGroup">name of the processing group</param>
@@ -140,16 +137,35 @@ namespace SKotstein.Net.Http.Routing
         /// <param name="methodInfo">method info</param>
         /// <param name="identifier"> target identifier (optional, only for internal usage)</param>
         /// <param name="path">unique path of the REST function</param>
-        public RoutingEntry(string processingGroup, HttpController httpController, MethodInfo methodInfo, string identifier, string path)
+        /// <param name="metrics">metrics of the routing entry</param>
+        public RoutingEntry(string processingGroup, HttpController httpController, MethodInfo methodInfo, string identifier, string path, int metrics)
         {
             _processingGroup = processingGroup;
             _httpController = httpController;
             _methodInfo = methodInfo;
-            _identifier = identifier;
+            Value = identifier;
             _path = path;
+            _metrics = metrics;
 
         }
 
-
+        /// <summary>
+        /// Indicates whether the underlying method is tagged with a <see cref="ContentType"/> attribute or not
+        /// </summary>
+        public bool MethodHasContentTypeAttribute
+        {
+            get
+            {
+                bool hasContentTypeAttribute = false;
+                foreach (Attribute a in System.Attribute.GetCustomAttributes(MethodInfo))
+                {
+                    if (a is ContentType)
+                    {
+                        hasContentTypeAttribute = true;
+                    }
+                }
+                return hasContentTypeAttribute;
+            }
+        }
     }
 }

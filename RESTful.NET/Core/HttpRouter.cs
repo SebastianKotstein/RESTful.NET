@@ -1,6 +1,8 @@
 ﻿using SKotstein.Net.Http.Attributes;
 using SKotstein.Net.Http.Context;
+using SKotstein.Net.Http.Manipulation;
 using SKotstein.Net.Http.Pipelining;
+using SKotstein.Net.Http.Pipelining.Single;
 using SKotstein.Net.Http.Routing;
 using SKotstein.Net.Http.Service;
 using System;
@@ -12,16 +14,26 @@ using System.Threading.Tasks;
 namespace SKotstein.Net.Http.Core
 {
     /// <summary>
-    /// The <see cref="HttpRouter"/> forwards an incoming <see cref="HttpContext"/> object (i.e. an HTTP request) to the designated <see cref="HttpProcessor"/> hosting the target REST function
-    /// mapping the URL and the HTTP method. Invalid HTTP requests and "special" requests like HTTP OPTIONS and HTTP TRACE are routed to the <see cref="HttpProcessor"/> hosting the <see cref="HttpInternalController"/>.
+    /// The <see cref="HttpRouter"/> forwards an incoming <see cref="HttpContext"/> object (i.e. an HTTP request) to the designated <see cref="HttpSimpleProcessor"/> hosting the target REST function
+    /// mapping the URL and the HTTP method. Invalid HTTP requests and "special" requests like HTTP OPTIONS and HTTP TRACE are routed to the <see cref="HttpSimpleProcessor"/> hosting the <see cref="HttpInternalController"/>.
     /// </summary>
-    public class HttpRouter : Router<HttpContext, RoutedContext>
+    public class HttpRouter : SingleRouter<HttpContext, RoutedContext>
     {
         private HttpService _reference;
+        private HttpManipulatorCollection<HttpContext> _manipulators;
+
+        public HttpManipulatorCollection<HttpContext> Manipulators
+        {
+            get
+            {
+                return _manipulators;
+            }
+        }
 
         public HttpRouter(HttpService reference)
         {
             _reference = reference;
+            _manipulators = new HttpManipulatorCollection<HttpContext>();
         }
 
 
@@ -37,6 +49,9 @@ namespace SKotstein.Net.Http.Core
 
         protected override void Route(HttpContext task)
         {
+            //apply manipulation first
+            _manipulators.Manipulate(task);
+
             //prepare route
             string route = "";
             
@@ -66,20 +81,18 @@ namespace SKotstein.Net.Http.Core
             }
 
             //determining routing target
-            RoutingEntry entry = _reference.RoutingTable.GetEntry(route);
+            RoutingEntry entry = _reference.RoutingEngine.GetEntry(route);
 
             //if no such entry --> EXCEPTION
             if (entry == null)
             {
-                entry = _reference.RoutingTable.GetEntry(HttpInternalController.PATH_NOT_FOUND);
+                entry = _reference.RoutingEngine.GetEntry(HttpInternalController.PATH_NOT_FOUND);
             }
 
             //pack routed context
             RoutedContext routedContext = new RoutedContext(task,entry);
            
             Forward(entry.ProcessingGroup, routedContext);
-            
-
 
         }
     }

@@ -1,6 +1,7 @@
 ﻿using SKotstein.Net.Http.Attributes;
 using SKotstein.Net.Http.Context;
 using SKotstein.Net.Http.Core;
+using SKotstein.Net.Http.Manipulation;
 using SKotstein.Net.Http.Routing;
 using System;
 using System.Collections.Concurrent;
@@ -18,7 +19,7 @@ namespace SKotstein.Net.Http.Service
     public abstract class HttpService
     {
 
-        protected RoutingTable _routingTable;
+        protected RoutingEngine _routingEngine;
         protected ServiceConfiguration _serviceConfiguration;
 
         /// <summary>
@@ -26,13 +27,35 @@ namespace SKotstein.Net.Http.Service
         /// </summary>
         /// <param name="httpController">HttpController object</param>
         /// <param name="processingGroup">processing group</param>
-        public abstract void AddController(HttpController httpController, string processingGroup);
+        public void AddController(HttpController httpController, string processingGroup)
+        {
+            AddController(httpController, processingGroup, false);
+        }
 
         /// <summary>
         /// Adds an <see cref="HttpController"/> object hosting REST functions to the default processing group.
         /// </summary>
         /// <param name="httpController">HttpController object</param>
-        public abstract void AddController(HttpController httpController);
+        public void AddController(HttpController httpController)
+        {
+            AddController(httpController, false);
+        }
+
+        /// <summary>
+        /// Adds an <see cref="HttpController"/> object hosting REST functions to the specified processing group.
+        /// </summary>
+        /// <param name="httpController">HttpController object</param>
+        /// <param name="processingGroup">processing group</param>
+        /// <param name="multiprocessing">whether the HttpRequests should be executed similtanously (true) or in sequence</param>
+        public abstract void AddController(HttpController httpController, string processingGroup, bool multiprocessing);
+
+        /// <summary>
+        /// Adds an <see cref="HttpController"/> object hosting REST functions to the default processing group.
+        /// </summary>
+        /// <param name="httpController">HttpController object</param>
+        /// <param name="multiprocessing">whether the HttpRequests should be executed similtanously (true) or in sequence</param>
+        public abstract void AddController(HttpController httpController, bool multiprocessing);
+
 
         /// <summary>
         /// Starts the underlying RESTful service with the specific <see cref="SKotstein.Net.Http.Service.ServiceConfiguration"/>
@@ -50,11 +73,11 @@ namespace SKotstein.Net.Http.Service
         /// </summary>
         public abstract void Stop();
 
-        internal RoutingTable RoutingTable
+        internal RoutingEngine RoutingEngine
         {
             get
             {
-                return _routingTable;
+                return _routingEngine;
             }
         }
 
@@ -65,7 +88,7 @@ namespace SKotstein.Net.Http.Service
         {
             get
             {
-                return _routingTable.ToString();
+                return _routingEngine.ToString();
             }
         }
 
@@ -80,7 +103,18 @@ namespace SKotstein.Net.Http.Service
             }
         }
 
+        public abstract HttpManipulatorCollection<HttpContext> RoutingPreManipulation
+        {
+            get;
+        }
 
+        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(bool multiProcessor);
+
+        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(string processingGroup, bool multiProcessor);
+
+        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(bool multiProcessor);
+
+        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(string processingGroup, bool multiProcessor);
     }
 }
 

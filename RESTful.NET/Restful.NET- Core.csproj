@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKotstein.Net.Http</RootNamespace>
-    <AssemblyName>WebServer.NET</AssemblyName>
+    <AssemblyName>Restful.NET.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,9 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\HTTP.Base\HttpBaseContext.cs" />
+    <Compile Include="Adapters\HTTP.Base\HttpBaseInboundAdapter.cs" />
+    <Compile Include="Adapters\HTTP.Base\HttpBaseOutboundAdapter.cs" />
     <Compile Include="Adapters\HTTP.SYS\HttpSysContext.cs" />
     <Compile Include="Adapters\HTTP.SYS\HttpSysInboundAdapter.cs" />
     <Compile Include="Adapters\HTTP.SYS\HttpSysOutboundAdapter.cs" />
+    <Compile Include="Administration\AdministrationController.cs" />
     <Compile Include="Attributes\ContentType.cs" />
     <Compile Include="Attributes\Path.cs" />
     <Compile Include="Context\HttpPayload.cs" />
@@ -58,29 +62,54 @@
     <Compile Include="Context\HttpResponse.cs" />
     <Compile Include="Context\HttpResponseHeaders.cs" />
     <Compile Include="Context\RoutedContext.cs" />
+    <Compile Include="Administration\DebugController.cs" />
     <Compile Include="Core\HttpController.cs" />
     <Compile Include="Core\HttpInternalController.cs" />
     <Compile Include="Core\HttpInboundAdapter.cs" />
+    <Compile Include="Core\HttpLimitedMultiProcessor.cs" />
+    <Compile Include="Manipulation\ContentTypePostSetter.cs" />
+    <Compile Include="Manipulation\ContentTypePreSetter.cs" />
+    <Compile Include="Manipulation\CorsHeaderSetter.cs" />
+    <Compile Include="Manipulation\HttpManipulatorCollection.cs" />
+    <Compile Include="Manipulation\HttpManipulator.cs" />
     <Compile Include="Core\HttpOutboundAdapter.cs" />
-    <Compile Include="Core\HttpProcessor.cs" />
+    <Compile Include="Core\HttpProcessorOperations.cs" />
+    <Compile Include="Core\HttpSimpleProcessor.cs" />
     <Compile Include="Core\HttpRouter.cs" />
-    <Compile Include="Pipelining\InboundAdapter.cs" />
-    <Compile Include="Pipelining\OutboundAdapter.cs" />
-    <Compile Include="Pipelining\Processor.cs" />
-    <Compile Include="Pipelining\Router.cs" />
-    <Compile Include="Pipelining\SimpleProcessor.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\ChachedRessource.cs" />
+    <Compile Include="Web\RessourceCache.cs" />
+    <Compile Include="Web\WebController.cs" />
+    <Compile Include="Pipelining\Multi\LimitedMultiFilter.cs" />
+    <Compile Include="Pipelining\Multi\LimitedMultiInboundAdapter.cs" />
+    <Compile Include="Pipelining\_Old\InboundAdapter.cs" />
+    <Compile Include="Pipelining\_Old\LimitedMultiProcessor.cs" />
+    <Compile Include="Pipelining\_Old\MultiProcessor.cs" />
+    <Compile Include="Pipelining\Multi\LimitedMultiProcessor.cs" />
+    <Compile Include="Pipelining\_Old\OutboundAdapter.cs" />
+    <Compile Include="Pipelining\_Old\Processor.cs" />
+    <Compile Include="Pipelining\_Old\Router.cs" />
+    <Compile Include="Pipelining\_Old\SimpleProcessor.cs" />
+    <Compile Include="Pipelining\Single\SingleFilter.cs" />
+    <Compile Include="Pipelining\Single\SingleRouter.cs" />
+    <Compile Include="Pipelining\Single\SingleInboundAdapter.cs" />
+    <Compile Include="Pipelining\Single\SingleOutboundAdapter.cs" />
+    <Compile Include="Pipelining\Single\SingleProcessor.cs" />
+    <Compile Include="Routing\RoutingEngine.cs" />
     <Compile Include="Routing\RoutingEntry.cs" />
-    <Compile Include="Routing\RoutingTable.cs" />
     <Compile Include="Routing\RoutingTree.cs" />
-    <Compile Include="Routing\TargetIdNode.cs" />
     <Compile Include="Routing\TreeNode.cs" />
+    <Compile Include="Threading\ThreadFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\DefaultHttpSysService.cs" />
     <Compile Include="Service\DefaultServiceConfiguration.cs" />
     <Compile Include="Service\HttpService.cs" />
     <Compile Include="Service\ServiceConfiguration.cs" />
+    <Compile Include="Threading\ThreadTask.cs" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="WebContent\Administration\index.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

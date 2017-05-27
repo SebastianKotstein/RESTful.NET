@@ -57,9 +57,9 @@
     <Compile Include="RestLayer\ContactManagementController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RESTful.NET\Restful.NET.csproj">
+    <ProjectReference Include="..\RESTful.NET\Restful.NET- Core.csproj">
       <Project>{2551da39-403b-4850-b7a0-6334aba10e76}</Project>
-      <Name>Restful.NET</Name>
+      <Name>Restful.NET- Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

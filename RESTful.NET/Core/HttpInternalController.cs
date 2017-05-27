@@ -42,24 +42,24 @@ namespace SKotstein.Net.Http.Core
             {
                 //check whether other methods are allowed and which one:
                 IList<string> allowed = new List<string>();
-                if (_reference.RoutingTable.GetEntry(HttpMethod.GET + httpContext.Request.Path)!= null)
+                if (_reference.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path)!= null)
                 {
                     allowed.Add("GET");
                     allowed.Add("HEAD");
                 }
-                if (_reference.RoutingTable.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
+                if (_reference.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
                 {
                     allowed.Add("PUT");
                 }
-                if (_reference.RoutingTable.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
+                if (_reference.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
                 {
                     allowed.Add("POST");
                 }
-                if (_reference.RoutingTable.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
+                if (_reference.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
                 {
                     allowed.Add("DELETE");
                 }
-                if (_reference.RoutingTable.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
+                if (_reference.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
                 {
                     allowed.Add("PATCH");
                 }
@@ -173,7 +173,7 @@ namespace SKotstein.Net.Http.Core
                     if (httpContext.Request.Path.CompareTo("*") == 0)
                     {
 
-                        foreach (RoutingEntry re in _reference.RoutingTable.RoutingEntries.Values)
+                        foreach (RoutingEntry re in _reference.RoutingEngine.RoutingEntries.Values)
                         {
                             if(re.HttpMethod != HttpMethod._INTERNAL)
                             {
@@ -188,28 +188,28 @@ namespace SKotstein.Net.Http.Core
                     else
                     {
                         //for individual paths, determine supportive methods
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.GET + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path) != null)
                         {
                             allowed.Add("GET");
                             allowed.Add("HEAD");
                         }
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
                         {
                             allowed.Add("PUT");
                         }
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
                         {
                             allowed.Add("POST");
                         }
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
                         {
                             allowed.Add("DELETE");
                         }
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
                         {
                             allowed.Add("PATCH");
                         }
-                        if (_reference.RoutingTable.GetEntry(HttpMethod.CONNECT + httpContext.Request.Path) != null)
+                        if (_reference.RoutingEngine.GetEntry(HttpMethod.CONNECT + httpContext.Request.Path) != null)
                         {
                             allowed.Add("CONNECT");
                         }

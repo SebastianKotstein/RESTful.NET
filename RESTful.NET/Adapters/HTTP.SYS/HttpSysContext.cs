@@ -15,6 +15,8 @@ namespace SKotstein.Net.Http.Adapters.HTTP.SYS
     {
         private HttpListenerContext _originalContext;
 
+        
+
         internal HttpListenerContext OriginalContext
         {
             get

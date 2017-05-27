@@ -1,5 +1,6 @@
 ﻿using SKotstein.Net.Http.Context;
-using SKotstein.Net.Http.Pipelining;
+
+using SKotstein.Net.Http.Pipelining.Single;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SKotstein.Net.Http.Core
     /// <summary>
     /// An implementation of this abstract class is responsible for accepting and parsing incoming HTTP requests.
     /// </summary>
-    public abstract class HttpInboundAdapter : InboundAdapter<HttpContext>
+    public abstract class HttpInboundAdapter : SingleInboundAdapter<HttpContext>
     {
         public const string SCHEMA_HTTP = "http";
         public const string SCHEMA_HTTPS = "https";

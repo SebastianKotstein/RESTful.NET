@@ -9,8 +9,8 @@ namespace SKotstein.Net.Http.Context
 {
     /// <summary>
     /// The <see cref="RoutedContext"/> enriches the underlying <see cref="HttpContext"/> with details of the method which has been selected for processing the context.
-    /// Commonly, the <see cref="RoutedContext"/> is exchanged between the <see cref="Http.Core.HttpRouter"/> and a <see cref="Http.Core.HttpProcessor"/> hosting the method for processing this context.
-    /// By attaching the <see cref="RoutingEntry"/> the <see cref="Http.Core.HttpProcessor"/> can easily determine the method for processing the context instead of searching the routing table/tree again.
+    /// Commonly, the <see cref="RoutedContext"/> is exchanged between the <see cref="Http.Core.HttpRouter"/> and a <see cref="Http.Core.HttpSimpleProcessor"/> hosting the method for processing this context.
+    /// By attaching the <see cref="RoutingEntry"/> the <see cref="Http.Core.HttpSimpleProcessor"/> can easily determine the method for processing the context instead of searching the routing table/tree again.
     /// </summary>
     public class RoutedContext
     {

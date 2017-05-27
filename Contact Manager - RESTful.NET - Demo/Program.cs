@@ -1,5 +1,7 @@
-﻿using SKotstein.Net.Http.Core;
+﻿using SKotstein.Net.Http.Administration;
+using SKotstein.Net.Http.Core;
 using SKotstein.Net.Http.Service;
+using SKotstein.Net.Http.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,8 +45,11 @@ namespace SKotstein.Demo.Http.ContactManager
             businessLayer.AddPhone(contact.Id, phone2);
             
             //Step 4: create server and link REST Layer
-            HttpService service = new DefaultHttpSysService(false, "+", 8080);
-            service.AddController(restLayer);
+            HttpService service = new DefaultHttpSysService(false, "+", 80);
+            service.AddController(restLayer,false);
+            service.AddController(new DebugController(service));
+            service.AddController(new WebController(@"E:\Data\Dropbox\Ulmbach"), true);
+
 
             //Step 5: Start server
             Console.WriteLine("Routes:");

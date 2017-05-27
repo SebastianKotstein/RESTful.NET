@@ -126,6 +126,5 @@ namespace SKotstein.Net.Http.Routing
             }
             return null;
         }
-
     }
 }
