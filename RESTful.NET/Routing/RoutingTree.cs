@@ -229,7 +229,7 @@ namespace SKotstein.Net.Http.Routing
             string entries = "";
             foreach(RoutingEntry routingEntry in routingEntries)
             {
-                entries += "[ID: " + routingEntry.Identifier + "]\t[" + routingEntry.Path + "]\n";
+                entries += "[ID: " + routingEntry.Identifier + "]\t[PG: " + routingEntry.ProcessingGroup + "]\t\t[" + routingEntry.Path + "]\n";
             }
             return entries;
         }

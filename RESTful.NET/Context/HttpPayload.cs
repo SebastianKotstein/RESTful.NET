@@ -176,15 +176,12 @@ namespace SKotstein.Net.Http.Context
         }
 
         /// <summary>
-        /// Reads the passed stream and appends it content to this payload.
+        /// Reads the passed stream and copy it content to this payload.
         /// </summary>
         /// <param name="stream">source stream</param>
-        /// <param name="length">length of the source stream</param>
-        internal void ReadFrom(Stream stream, int length)
+        internal void ReadFrom(Stream stream)
         {
-            byte[] data = new byte[length];
-            stream.Read(data, 0, length);
-            WriteBytes(data);
+            stream.CopyTo(_stream);
         }
 
         /// <summary>
@@ -220,6 +217,8 @@ namespace SKotstein.Net.Http.Context
         public const string APPLICATION_XHTML_XML = APPLICATION + "/xhtml+xml";
         public const string APPLICATION_XML = APPLICATION + "/xml";
         public const string APPLICATION_ZIP = APPLICATION + "/zip";
+        public const string APPLICATION_X_WWW_FORM_URLENCODED = APPLICATION + "/x-www-form-urlencoded";
+        public const string APPLICATION_SCHEMA_JSON = APPLICATION + "/schema+json";
 
         public const string IMAGE_GIF = IMAGE + "/gif";
         public const string IMAGE_JPEG = IMAGE + "/jpeg";

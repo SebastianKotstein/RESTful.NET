@@ -37,6 +37,12 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="skotstein.net.http.oauth">
+      <HintPath>..\skotstein.net.http.oauth\bin\Debug\skotstein.net.http.oauth.dll</HintPath>
+    </Reference>
+    <Reference Include="skotstein.net.http.oauth.filestorage">
+      <HintPath>..\skotstein.net.http.oauth.filestorage\bin\Debug\skotstein.net.http.oauth.filestorage.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -57,6 +63,14 @@
     <Compile Include="RestLayer\ContactManagementController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Restful.NET - Administration Kit\Restful.NET - Administration Kit.csproj">
+      <Project>{38ea3af2-82c1-4ca6-bd2a-7aa7b988f517}</Project>
+      <Name>Restful.NET - Administration Kit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Restful.NET - Web Extension\Restful.NET - Web Extension.csproj">
+      <Project>{2e7cbb3f-b330-44b3-9468-73e51f42e52f}</Project>
+      <Name>Restful.NET - Web Extension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RESTful.NET\Restful.NET- Core.csproj">
       <Project>{2551da39-403b-4850-b7a0-6334aba10e76}</Project>
       <Name>Restful.NET- Core</Name>

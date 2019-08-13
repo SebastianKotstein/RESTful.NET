@@ -95,7 +95,7 @@ namespace SKotstein.Net.Http.Adapters.HTTP.SYS
             //4. Content:
             if (_originalContext.Request.HasEntityBody)
             {
-                Request.Payload.ReadFrom(_originalContext.Request.InputStream, (int)_originalContext.Request.ContentLength64);
+                Request.Payload.ReadFrom(_originalContext.Request.InputStream);
             }
 
             //5. Headers:

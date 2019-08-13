@@ -1,5 +1,7 @@
 ﻿using SKotstein.Net.Http.Attributes;
 using SKotstein.Net.Http.Context;
+using SKotstein.Net.Http.Manipulation;
+using SKotstein.Net.Http.Model.Exceptions;
 using SKotstein.Net.Http.Routing;
 using SKotstein.Net.Http.Service;
 using System;
@@ -23,26 +25,93 @@ namespace SKotstein.Net.Http.Core
             _reference = reference;
         }
 
-        public HttpContext InvokeMethod(RoutedContext context)
+        public void ProcessHttpRequest(RoutedContext context, HttpManipulatorCollection<RoutedContext> internalPreManipulators, HttpManipulatorCollection<RoutedContext> preManipulators, HttpManipulatorCollection<RoutedContext> internalPostManipulators, HttpManipulatorCollection<RoutedContext> postManipulators)
         {
-            //extract routing information
-            RoutingEntry entry = context.RoutingEntry;
-            MethodInfo method = entry.MethodInfo;
-            HttpController controller = entry.HttpController;
-
-            //prepare parameter list
-            IList<string> variables = ExtractPathVariables(entry.Path, context.Context.Request.Path);
-
-            object[] parameters = new object[1 + variables.Count]; //prepare parameter list for invocation
-            parameters[0] = context.Context; //the first parameter is always the context object
-            //followed by the extracted URL variables:
-            for (int i = 0; i < variables.Count; i++)
+            try
             {
-                parameters[i + 1] = variables[i];
-            }
+                //execute pre manipulators first
+                internalPreManipulators.Manipulate(context);
+                preManipulators.Manipulate(context);
 
+                //extract routing information
+                RoutingEntry entry = context.RoutingEntry;
+                MethodInfo method = entry.MethodInfo;
+                HttpController controller = entry.HttpController;
+
+                //prepare parameter list
+                IList<string> variables = ExtractPathVariables(entry.Path, context.Context.Request.Path);
+
+                object[] parameters = new object[1 + variables.Count]; //prepare parameter list for invocation
+                parameters[0] = context.Context; //the first parameter is always the context object
+                                                 //followed by the extracted URL variables:
+                for (int i = 0; i < variables.Count; i++)
+                {
+                    parameters[i + 1] = variables[i];
+                }
+
+                //invoke method
+                method.Invoke(controller, parameters);
+
+                //post processing
+                internalPostManipulators.Manipulate(context);
+                postManipulators.Manipulate(context);
+            }
+            catch(HttpRequestException hre) //this might never be the case, as HttpRequestException is always an inner exeception
+            {
+                if (!String.IsNullOrWhiteSpace(hre.ErrorMessage))
+                {
+                    context.Context.Response.Payload.Write(hre.ErrorMessage);
+                    if (!String.IsNullOrWhiteSpace(hre.ContentType))
+                    {
+                        context.Context.Response.Headers.Set("Content-Type", hre.ContentType);
+                    }
+                    else
+                    {
+                        context.Context.Response.Headers.Set("Content-Type", MimeType.TEXT_PLAN);
+                    }
+                }
+                context.Context.Response.Status = hre.Status;
+            }
+            catch(Exception e)
+            {
+                if(e.InnerException is HttpRequestException)
+                {
+                    HttpRequestException hre = (HttpRequestException)e.InnerException;
+                    if (!String.IsNullOrWhiteSpace(hre.ErrorMessage))
+                    {
+                        context.Context.Response.Payload.Write(hre.ErrorMessage);
+                        if (!String.IsNullOrWhiteSpace(hre.ContentType))
+                        {
+                            context.Context.Response.Headers.Set("Content-Type", hre.ContentType);
+                        }
+                        else
+                        {
+                            context.Context.Response.Headers.Set("Content-Type", MimeType.TEXT_PLAN);
+                        }
+                    }
+                    context.Context.Response.Status = hre.Status;
+
+                }
+                else
+                {
+                    if(e.InnerException!=null && !String.IsNullOrEmpty(e.InnerException.Message))
+                    {
+                        context.Context.Response.Payload.Write(e.InnerException.Message);
+                    }
+                    else
+                    {
+                        context.Context.Response.Payload.Write(e.Message);
+                    }
+                    
+                    context.Context.Response.Headers.Set("Content-Type", MimeType.TEXT_PLAN);
+                    context.Context.Response.Status = HttpStatus.InternalServerError;
+                }
+            }
+           
+
+            /*
             //invoke method:
-            HttpContext httpContext = (HttpContext)method.Invoke(controller, parameters);
+            HttpContext httpContext = (HttpContext)
 
             /*
             if (httpContext == null)
@@ -51,8 +120,9 @@ namespace SKotstein.Net.Http.Core
                 httpContext.Response.Status = HttpStatus.InternalServerError;
                 //TODO: set Content with error
             }
-            */
+            
             return httpContext;
+            */
         }
 
         /// <summary>
@@ -85,5 +155,6 @@ namespace SKotstein.Net.Http.Core
             }
             return variables;
         }
+
     }
 }

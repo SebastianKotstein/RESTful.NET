@@ -31,31 +31,11 @@ namespace SKotstein.Demo.Http.ContactManager
         }
 
 
-        [Path("/contact",HttpMethod.GET)]
-        [ContentType(MimeType.APPLICATION_JSON)]
-        public void GetAll(HttpContext context)
-        {
-            
-            IList<Contact> list = _bridge.GetAllContacts();
-            string json = SerializeJson(list);
-
-            if(json != null)
-            {
-                context.Response.Payload.Write(json);
-                context.Response.Status = HttpStatus.OK;
-            }
-            else
-            {
-                context.Response.Status = HttpStatus.InternalServerError;
-            }
-        }
-
-       
-
         /*
         [Path("/contact/a", HttpMethod.GET)]
         public void GetSingle2(HttpContext context, string contactId)
         {
+
         }
         */
 
@@ -87,9 +67,24 @@ namespace SKotstein.Demo.Http.ContactManager
             }
         }
 
-      
+        [Path("/contact", HttpMethod.GET)]
+        [ContentType(MimeType.APPLICATION_JSON)]
+        public void GetAll(HttpContext context)
+        {
 
-       
+            IList<Contact> list = _bridge.GetAllContacts();
+            string json = SerializeJson(list);
+
+            if (json != null)
+            {
+                context.Response.Payload.Write(json);
+                context.Response.Status = HttpStatus.OK;
+            }
+            else
+            {
+                context.Response.Status = HttpStatus.InternalServerError;
+            }
+        }
 
         [Path("/contact", HttpMethod.PUT)]
         [ContentType(MimeType.APPLICATION_JSON)]
@@ -377,13 +372,17 @@ namespace SKotstein.Demo.Http.ContactManager
         }
 
         /*
+        
         [Path("/*", HttpMethod.GET)]
         public void SuperGenericTest(HttpContext context)
         {
-
+            
         }
-        */
+
         
+        */
+
+    
 
 
         /// <summary>

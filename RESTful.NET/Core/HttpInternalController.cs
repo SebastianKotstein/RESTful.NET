@@ -22,11 +22,9 @@ namespace SKotstein.Net.Http.Core
         public const string HTTP_VERSION = "_INTERNAL/server/version";
         public const string BAD_REQUEST = "_INTERNAL/client/bad_request";
 
-        private HttpService _reference;
-
-        internal HttpInternalController(HttpService reference)
+        internal HttpInternalController()
         {
-            _reference = reference;
+            
         }
 
         /// <summary>
@@ -42,24 +40,24 @@ namespace SKotstein.Net.Http.Core
             {
                 //check whether other methods are allowed and which one:
                 IList<string> allowed = new List<string>();
-                if (_reference.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path)!= null)
+                if (Service.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path)!= null)
                 {
                     allowed.Add("GET");
                     allowed.Add("HEAD");
                 }
-                if (_reference.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
+                if (Service.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
                 {
                     allowed.Add("PUT");
                 }
-                if (_reference.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
+                if (Service.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
                 {
                     allowed.Add("POST");
                 }
-                if (_reference.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
+                if (Service.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
                 {
                     allowed.Add("DELETE");
                 }
-                if (_reference.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
+                if (Service.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
                 {
                     allowed.Add("PATCH");
                 }
@@ -94,7 +92,7 @@ namespace SKotstein.Net.Http.Core
         [ContentType(MimeType.MESSAGE_HTTP)]
         public void Trace(HttpContext httpContext)
         {
-            switch (_reference.ServiceConfiguration.AllowTracing)
+            switch (Service.ServiceConfiguration.AllowTracing)
             {
                 case TracingMode.DISABLED:
                     httpContext.Response.Status = HttpStatus.NotImplemented;
@@ -159,7 +157,7 @@ namespace SKotstein.Net.Http.Core
         [Path("/options",HttpMethod._INTERNAL)]
         public void Options(HttpContext httpContext)
         {
-            switch (_reference.ServiceConfiguration.AllowOptions)
+            switch (Service.ServiceConfiguration.AllowOptions)
             {
                 case OptionsMode.DISABLED:
                     httpContext.Response.Status = HttpStatus.NotImplemented;
@@ -173,7 +171,7 @@ namespace SKotstein.Net.Http.Core
                     if (httpContext.Request.Path.CompareTo("*") == 0)
                     {
 
-                        foreach (RoutingEntry re in _reference.RoutingEngine.RoutingEntries.Values)
+                        foreach (RoutingEntry re in Service.RoutingEngine.RoutingEntries.Values)
                         {
                             if(re.HttpMethod != HttpMethod._INTERNAL)
                             {
@@ -188,38 +186,38 @@ namespace SKotstein.Net.Http.Core
                     else
                     {
                         //for individual paths, determine supportive methods
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.GET + httpContext.Request.Path) != null)
                         {
                             allowed.Add("GET");
                             allowed.Add("HEAD");
                         }
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.PUT + httpContext.Request.Path) != null)
                         {
                             allowed.Add("PUT");
                         }
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.POST + httpContext.Request.Path) != null)
                         {
                             allowed.Add("POST");
                         }
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.DELETE + httpContext.Request.Path) != null)
                         {
                             allowed.Add("DELETE");
                         }
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.PATCH + httpContext.Request.Path) != null)
                         {
                             allowed.Add("PATCH");
                         }
-                        if (_reference.RoutingEngine.GetEntry(HttpMethod.CONNECT + httpContext.Request.Path) != null)
+                        if (Service.RoutingEngine.GetEntry(HttpMethod.CONNECT + httpContext.Request.Path) != null)
                         {
                             allowed.Add("CONNECT");
                         }
                     }
                     //additionally add TRACE and OPTIONS if enabled (AUTO)
-                    if (_reference.ServiceConfiguration.AllowTracing == TracingMode.AUTO)
+                    if (Service.ServiceConfiguration.AllowTracing == TracingMode.AUTO)
                     {
                         allowed.Add(HttpMethod.TRACE.ToString());
                     }
-                    if (_reference.ServiceConfiguration.AllowOptions == OptionsMode.AUTO)
+                    if (Service.ServiceConfiguration.AllowOptions == OptionsMode.AUTO)
                     {
                         allowed.Add(HttpMethod.OPTIONS.ToString());
                     }
@@ -253,17 +251,16 @@ namespace SKotstein.Net.Http.Core
 
                         if (httpContext.Request.Headers.Has("Access-Control-Request-Headers"))
                         {
-                            if(_reference.ServiceConfiguration.AllowedHeaders == AllowedHeadersMode.ANY)
+                            if(Service.ServiceConfiguration.AllowedHeaders == AllowedHeadersMode.ANY)
                             {
-                                httpContext.Request.Headers.Set("Access-Control-Allow-Headers", httpContext.Request.Headers.Get("Access-Control-Request-Headers"));
+                                httpContext.Response.Headers.Set("Access-Control-Allow-Headers", httpContext.Request.Headers.Get("Access-Control-Request-Headers"));
                             }
                             else
                             {
-                                httpContext.Request.Headers.Set("Access-Control-Allow-Headers", _reference.ServiceConfiguration.AllowedStaticHeaders);
+                                httpContext.Response.Headers.Set("Access-Control-Allow-Headers", Service.ServiceConfiguration.AllowedStaticHeaders);
                             }
                         }
                     }
-                    
                     break;
 
 

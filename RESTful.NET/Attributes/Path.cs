@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace SKotstein.Net.Http.Attributes
 {
     /// <summary>
-    /// The <see cref="Path"/> attribute closes the gap between a REST function, which is described and uniquely specified by a combination of its Uniform Ressource Locator (URL, or better said, the path segment of this URL) and the underlying HTTP method describing 
-    /// the behavior of this function, and an ordinary C# method. By applying this Path attribute to a method, a conceptually planed REST function is mapped to the corresponding method which means that an incoming HTTP request designated for this REST function will be routed to this method.
+    /// The <see cref="Path"/> attribute closes the gap between a REST function, which is described and uniquely specified by a combination of its Uniform Ressource Locator (URL, or more specific, the path segment of this URL) and the underlying HTTP method describing 
+    /// the behavior of this function, and a C# method. By applying this Path attribute to a method, a conceptually planed REST function is mapped to the corresponding method which means that an incoming HTTP request designated for this REST function will be routed to this method.
     /// Note that the signature of all REST functions (i.e. the combination of URL path segments and HTTP methods) must be disjunct which means that a certain Path attribute can only be applied to at most one method (except if a wildcard element is used). But it is possible that mulitple but disjunct Path attributes (i.e. REST functions) can be applied to a single
     /// method sharing the logic of those REST functions (in other words: this attribute can be multiply applied to a single method).
     /// 

@@ -24,7 +24,8 @@ namespace SKotstein.Net.Http.Adapters.HTTP.SYS
             while (_httpListener.IsListening)
             {
                 //long form of ThreadPool.QueueUserWorkItem((O)=>{....},_httpListener.GetContext());
-                ThreadPool.QueueUserWorkItem(new WaitCallback(PrepareContext), _httpListener.GetContext());
+                //ThreadPool.QueueUserWorkItem(new WaitCallback(PrepareContext), _httpListener.GetContext());
+                PrepareContext(_httpListener.GetContext());
             }
         }
 
@@ -49,6 +50,8 @@ namespace SKotstein.Net.Http.Adapters.HTTP.SYS
             _httpListener.Prefixes.Clear();
             _httpListener.Prefixes.Add(Prefix);
             _httpListener.Start();
+           
+            
         }
     }
 }

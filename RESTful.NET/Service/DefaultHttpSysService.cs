@@ -20,8 +20,9 @@ namespace SKotstein.Net.Http.Service
     public class DefaultHttpSysService : HttpService
     {
         #region Namespace
-        const string DEFAULT_PROCESSING_GROUP = "DEFAULT_PG";
-        const string INTERNAL_PROCESSING_GROUP = "INTERNAL_PG";
+        public const string DEFAULT_PROCESSING_GROUP_SIMPLE = "DEFAULT_PG_SIMPLE";
+        public const string DEFAULT_PROCESSING_GROUP_MULTI = "DEFAULT_PG_MULTI";
+        public const string INTERNAL_PROCESSING_GROUP = "INTERNAL_PG";
         #endregion
 
         #region Pipes & Filters
@@ -31,8 +32,7 @@ namespace SKotstein.Net.Http.Service
         private HttpInboundAdapter _httpInboundAdapter;
         private HttpOutboundAdapter _httpOutboundAdapter;
         private HttpRouter _httpRouter;
-        private IDictionary<string, HttpSimpleProcessor> _httpSimpleProcessors;
-        private IDictionary<string, HttpLimitedMultiProcessor> _httpLimitedMultiProcessors;
+        private IDictionary<string, IHttpProcessor> _httpProcessors;
         #endregion
 
         /// <summary>
@@ -49,9 +49,12 @@ namespace SKotstein.Net.Http.Service
             _httpInboundAdapter = new HttpSysInboundAdapter();
             _httpOutboundAdapter = new HttpSysOutboundAdapter();
             _httpRouter = new HttpRouter(this);
-            _httpSimpleProcessors = new Dictionary<string, HttpSimpleProcessor>();
-            _httpLimitedMultiProcessors = new Dictionary<string, HttpLimitedMultiProcessor>();
+            _httpProcessors = new Dictionary<string, IHttpProcessor>();
 
+            //set names
+            _httpInboundAdapter.Name = "TxHTTP_Inbound_Adapter";
+            _httpOutboundAdapter.Name = "TxHTTP_Outbound_Adapter";
+            _httpRouter.Name = "TxHTTP_Router";
 
             //HttpInboundAdapter ----<TaggedContext>----> HttpRouter
             _httpInboundAdapter.OutputPipe = _inputPipe;
@@ -61,7 +64,7 @@ namespace SKotstein.Net.Http.Service
             _httpOutboundAdapter.InputPipe = _outputPipe;
 
             _routingEngine = new RoutingEngine();
-            AddController(new HttpInternalController(this), INTERNAL_PROCESSING_GROUP);
+            AddController(new HttpInternalController(), INTERNAL_PROCESSING_GROUP);
 
             //create ServiceConfiguration
             _serviceConfiguration = new ServiceConfiguration();
@@ -82,27 +85,39 @@ namespace SKotstein.Net.Http.Service
 
         public override void AddController(HttpController httpController, bool multiprocessing)
         {
-            AddController(httpController, DEFAULT_PROCESSING_GROUP, multiprocessing);
+            if (multiprocessing)
+            {
+                AddController(httpController, DEFAULT_PROCESSING_GROUP_MULTI, multiprocessing);
+            }
+            else
+            {
+                AddController(httpController, DEFAULT_PROCESSING_GROUP_SIMPLE, multiprocessing);
+            }
+            
         }
 
         public override void AddController(HttpController httpController, string processingGroup, bool multiprocessing)
         {
-            if (!multiprocessing)
+            if (!_httpProcessors.ContainsKey(processingGroup))
             {
-                if (!_httpSimpleProcessors.ContainsKey("SIMPLE_"+processingGroup))
-                {
-                    AddProcessor("SIMPLE_" + processingGroup, multiprocessing);
-                }
-                RegisterMethods("SIMPLE_" + processingGroup, httpController);
+                AddProcessor(processingGroup, multiprocessing);
             }
             else
             {
-                if (!_httpLimitedMultiProcessors.ContainsKey("MULTI_"+processingGroup))
+                //if the existing processing group has not the preferred type
+                if(_httpProcessors[processingGroup].IsMultiProcessor != multiprocessing)
                 {
-                    AddProcessor("MULTI_" + processingGroup, multiprocessing);
+                    throw new Exception("Cannot add controller since preferred processing group is multiprocessing="+!multiprocessing);
                 }
-                RegisterMethods("MULTI_" + processingGroup, httpController);
             }
+            //set service reference
+            httpController.Service = this;
+            //set provisional UUID if not set
+            if(httpController.Uuid == null)
+            {
+                httpController.Uuid = httpController.GetType().GUID.ToString() + "_AUTO";
+            }
+            RegisterMethods(processingGroup, httpController);
             
         }
 
@@ -117,13 +132,9 @@ namespace SKotstein.Net.Http.Service
             _httpInboundAdapter.Schema = _serviceConfiguration.IsSecured ? HttpInboundAdapter.SCHEMA_HTTPS : HttpInboundAdapter.SCHEMA_HTTP;
 
             _httpOutboundAdapter.Start();
-            foreach(HttpSimpleProcessor p in _httpSimpleProcessors.Values)
+            foreach(IHttpProcessor p in _httpProcessors.Values)
             {
-                p.Start();
-            }
-            foreach (HttpLimitedMultiProcessor p in _httpLimitedMultiProcessors.Values)
-            {
-                p.Start();
+                p.StartProcessor();
             }
             _httpRouter.Start();
             _httpInboundAdapter.Start();
@@ -134,14 +145,11 @@ namespace SKotstein.Net.Http.Service
         {
             _httpInboundAdapter.Stop();
             _httpRouter.Stop();
-            foreach (HttpSimpleProcessor p in _httpSimpleProcessors.Values)
+            foreach (IHttpProcessor p in _httpProcessors.Values)
             {
-                p.Stop();
+                p.StopProcessor();
             }
-            foreach (HttpLimitedMultiProcessor p in _httpLimitedMultiProcessors.Values)
-            {
-                p.Stop();
-            }
+          
             _httpOutboundAdapter.Stop();
         }
 
@@ -153,35 +161,38 @@ namespace SKotstein.Net.Http.Service
 
         private void AddProcessor(string processingGroup, bool multiprocessing)
         {
+            BlockingCollection<RoutedContext> inputPipe = new BlockingCollection<RoutedContext>();
+
             if (!multiprocessing)
             {
-                HttpSimpleProcessor httpProcessor = new HttpSimpleProcessor(this);
-                BlockingCollection<RoutedContext> inputPipe = new BlockingCollection<RoutedContext>();
+                HttpSimpleProcessor processor = new HttpSimpleProcessor(this);
+                processor.ProcessingGroupName = processingGroup;
+                processor.Name = "Tx_"+processingGroup;
 
                 //HttpRouter ---<RoutedContext>---> HttpProcessor
-                httpProcessor.InputPipe = inputPipe;
-                _httpRouter.AddOutputPipe(processingGroup, inputPipe);
+                processor.InputPipe = inputPipe;
 
                 //HttpProcessor ---<HttpContext>---> HttpOutboundAdapter
-                httpProcessor.OutputPipe = _httpOutboundAdapter.InputPipe;
+                processor.OutputPipe = _httpOutboundAdapter.InputPipe;
 
-                _httpSimpleProcessors.Add(processingGroup, httpProcessor);
+                _httpProcessors.Add(processingGroup, processor);
             }
             else
             {
-                HttpLimitedMultiProcessor httpProcessor = new HttpLimitedMultiProcessor(this);
-                BlockingCollection<RoutedContext> inputPipe = new BlockingCollection<RoutedContext>();
+                HttpLimitedMultiProcessor processor = new HttpLimitedMultiProcessor(this);
+                processor.ProcessingGroupName = processingGroup;
 
                 //HttpRouter ---<RoutedContext>---> HttpProcessor
-                httpProcessor.InputPipe = inputPipe;
-                _httpRouter.AddOutputPipe(processingGroup, inputPipe);
+                processor.InputPipe = inputPipe;
 
                 //HttpProcessor ---<HttpContext>---> HttpOutboundAdapter
-                httpProcessor.OutputPipe = _httpOutboundAdapter.InputPipe;
+                processor.OutputPipe = _httpOutboundAdapter.InputPipe;
 
-                _httpLimitedMultiProcessors.Add(processingGroup, httpProcessor);
+                _httpProcessors.Add(processingGroup, processor);
             }
-            
+
+            _httpRouter.AddOutputPipe(processingGroup, inputPipe);
+
         }
 
         private void RegisterMethods(string processingGroup, HttpController httpController)
@@ -225,52 +236,54 @@ namespace SKotstein.Net.Http.Service
             }
         }
 
-        public override HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(bool multiProcessor)
+        public override IDictionary<string, IHttpProcessor> HttpProcessors
         {
-            if (multiProcessor)
+            get
             {
-                return _httpLimitedMultiProcessors[DEFAULT_PROCESSING_GROUP].PreManipulators;
-            }
-            else
-            {
-                return _httpSimpleProcessors[DEFAULT_PROCESSING_GROUP].PreManipulators;
+                return _httpProcessors;
             }
         }
 
-        public override HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(string processingGroup, bool multiProcessor)
+        public override string Prefix
         {
-            if (multiProcessor)
+            get
             {
-                return _httpLimitedMultiProcessors[processingGroup].PreManipulators;
-            }
-            else
-            {
-                return _httpSimpleProcessors[processingGroup].PreManipulators;
+                return _httpInboundAdapter.Prefix;
             }
         }
 
-        public override HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(bool multiProcessor)
+        public override HttpManipulatorCollection<RoutedContext> GetProcessorPreManipulation(bool multiProcessor)
         {
             if (multiProcessor)
             {
-                return _httpLimitedMultiProcessors[DEFAULT_PROCESSING_GROUP].PostManipulators;
+                return _httpProcessors[DEFAULT_PROCESSING_GROUP_MULTI].PreManipulators;
             }
             else
             {
-                return _httpSimpleProcessors[DEFAULT_PROCESSING_GROUP].PostManipulators;
+                return _httpProcessors[DEFAULT_PROCESSING_GROUP_SIMPLE].PreManipulators;
             }
         }
 
-        public override HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(string processingGroup, bool multiProcessor)
+        public override HttpManipulatorCollection<RoutedContext> GetProcessorPreManipulation(string processingGroup)
+        {
+            return _httpProcessors[processingGroup].PreManipulators;
+        }
+
+        public override HttpManipulatorCollection<RoutedContext> GetProcessorPostManipulation(bool multiProcessor)
         {
             if (multiProcessor)
             {
-                return _httpLimitedMultiProcessors[processingGroup].PostManipulators;
+                return _httpProcessors[DEFAULT_PROCESSING_GROUP_MULTI].PostManipulators;
             }
             else
             {
-                return _httpSimpleProcessors[processingGroup].PostManipulators;
+                return _httpProcessors[DEFAULT_PROCESSING_GROUP_SIMPLE].PostManipulators;
             }
+        }
+
+        public override HttpManipulatorCollection<RoutedContext> GetProcessorPostManipulation(string processingGroup)
+        {
+            return _httpProcessors[processingGroup].PostManipulators;
         }
     }
 }

@@ -52,9 +52,14 @@
     <Compile Include="Adapters\HTTP.SYS\HttpSysContext.cs" />
     <Compile Include="Adapters\HTTP.SYS\HttpSysInboundAdapter.cs" />
     <Compile Include="Adapters\HTTP.SYS\HttpSysOutboundAdapter.cs" />
-    <Compile Include="Administration\AdministrationController.cs" />
     <Compile Include="Attributes\ContentType.cs" />
     <Compile Include="Attributes\Path.cs" />
+    <Compile Include="Attributes\ProcessingGroup.cs" />
+    <Compile Include="Config\ConfigItem.cs" />
+    <Compile Include="Config\ConfigList.cs" />
+    <Compile Include="Config\ConfigTable.cs" />
+    <Compile Include="Config\Configuration.cs" />
+    <Compile Include="Config\ConfigField.cs" />
     <Compile Include="Context\HttpPayload.cs" />
     <Compile Include="Context\HttpContext.cs" />
     <Compile Include="Context\HttpRequest.cs" />
@@ -62,11 +67,11 @@
     <Compile Include="Context\HttpResponse.cs" />
     <Compile Include="Context\HttpResponseHeaders.cs" />
     <Compile Include="Context\RoutedContext.cs" />
-    <Compile Include="Administration\DebugController.cs" />
     <Compile Include="Core\HttpController.cs" />
     <Compile Include="Core\HttpInternalController.cs" />
     <Compile Include="Core\HttpInboundAdapter.cs" />
     <Compile Include="Core\HttpLimitedMultiProcessor.cs" />
+    <Compile Include="Core\IHttpProcessor.cs" />
     <Compile Include="Manipulation\ContentTypePostSetter.cs" />
     <Compile Include="Manipulation\ContentTypePreSetter.cs" />
     <Compile Include="Manipulation\CorsHeaderSetter.cs" />
@@ -76,19 +81,10 @@
     <Compile Include="Core\HttpProcessorOperations.cs" />
     <Compile Include="Core\HttpSimpleProcessor.cs" />
     <Compile Include="Core\HttpRouter.cs" />
-    <Compile Include="Web\ChachedRessource.cs" />
-    <Compile Include="Web\RessourceCache.cs" />
-    <Compile Include="Web\WebController.cs" />
+    <Compile Include="Model\Exceptions\HttpRequestException.cs" />
     <Compile Include="Pipelining\Multi\LimitedMultiFilter.cs" />
     <Compile Include="Pipelining\Multi\LimitedMultiInboundAdapter.cs" />
-    <Compile Include="Pipelining\_Old\InboundAdapter.cs" />
-    <Compile Include="Pipelining\_Old\LimitedMultiProcessor.cs" />
-    <Compile Include="Pipelining\_Old\MultiProcessor.cs" />
     <Compile Include="Pipelining\Multi\LimitedMultiProcessor.cs" />
-    <Compile Include="Pipelining\_Old\OutboundAdapter.cs" />
-    <Compile Include="Pipelining\_Old\Processor.cs" />
-    <Compile Include="Pipelining\_Old\Router.cs" />
-    <Compile Include="Pipelining\_Old\SimpleProcessor.cs" />
     <Compile Include="Pipelining\Single\SingleFilter.cs" />
     <Compile Include="Pipelining\Single\SingleRouter.cs" />
     <Compile Include="Pipelining\Single\SingleInboundAdapter.cs" />
@@ -106,9 +102,10 @@
     <Compile Include="Service\ServiceConfiguration.cs" />
     <Compile Include="Threading\ThreadTask.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="WebContent\Administration\index.html" />
+    <Content Include="Config\Config.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

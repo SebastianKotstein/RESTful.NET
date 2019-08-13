@@ -23,6 +23,12 @@ namespace SKotstein.Net.Http.Service
         protected ServiceConfiguration _serviceConfiguration;
 
         /// <summary>
+        /// Gets the Prefix of the underlying <see cref="HttpService"/> including the HTTP Schema, the Host and the Port.
+        /// </summary>
+        public abstract string Prefix { get; }
+
+
+        /// <summary>
         /// Adds an <see cref="HttpController"/> object hosting REST functions to the specified processing group.
         /// </summary>
         /// <param name="httpController">HttpController object</param>
@@ -73,7 +79,7 @@ namespace SKotstein.Net.Http.Service
         /// </summary>
         public abstract void Stop();
 
-        internal RoutingEngine RoutingEngine
+        public RoutingEngine RoutingEngine
         {
             get
             {
@@ -103,18 +109,23 @@ namespace SKotstein.Net.Http.Service
             }
         }
 
+        public abstract IDictionary<string,IHttpProcessor> HttpProcessors
+        {
+            get;
+        }
+
         public abstract HttpManipulatorCollection<HttpContext> RoutingPreManipulation
         {
             get;
         }
 
-        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(bool multiProcessor);
+        public abstract HttpManipulatorCollection<RoutedContext> GetProcessorPreManipulation(bool multiProcessor);
 
-        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPreManipulation(string processingGroup, bool multiProcessor);
+        public abstract HttpManipulatorCollection<RoutedContext> GetProcessorPreManipulation(string processingGroup);
 
-        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(bool multiProcessor);
+        public abstract HttpManipulatorCollection<RoutedContext> GetProcessorPostManipulation(bool multiProcessor);
 
-        public abstract HttpManipulatorCollection<HttpContext> GetProcessorPostManipulation(string processingGroup, bool multiProcessor);
+        public abstract HttpManipulatorCollection<RoutedContext> GetProcessorPostManipulation(string processingGroup);
     }
 }
 

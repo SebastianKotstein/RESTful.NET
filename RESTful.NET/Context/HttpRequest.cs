@@ -132,6 +132,36 @@ namespace SKotstein.Net.Http.Context
         }
 
         /// <summary>
+        /// Returns the parsed Query Segment of the URL.
+        /// </summary>
+        public IDictionary<string,string> ParsedQuery
+        {
+            get
+            {
+                IDictionary<string, string> parsedQuery = new Dictionary<string, string>();
+                string[] splitted = Query.Split('&');
+                foreach(string split in splitted)
+                {
+                    string[] sp = split.Split('=');
+                    if(sp.Length == 2)
+                    {
+                        string name = sp[0];
+                        string value = sp[1];
+                        if (parsedQuery.ContainsKey(name))
+                        {
+                            parsedQuery[name] = value;
+                        }
+                        else
+                        {
+                            parsedQuery.Add(name, value);
+                        }
+                    }
+                }
+                return parsedQuery;
+            }
+        }
+
+        /// <summary>
         /// Returns the decoded path segment of the URL.
         /// </summary>
         public string Path
